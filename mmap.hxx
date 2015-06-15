@@ -13,7 +13,6 @@
 #define ENOMEM 12
 // EOVERFLOW
 #define EPERM 1
-#define ETXTBSY 26
 
 #define MAP_ANONYMOUS 0x20
 #define MAP_PRIVATE 0x2
@@ -51,7 +50,7 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
         _E(NOMEM),
         _E(OVERFLOW),
         _E(PERM),
-        _E(TXTBSY),
+        // ETXTBSY: MAP_DENYWRITE is ignored
     };
 
     Result<void*, Error>
