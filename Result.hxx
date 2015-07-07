@@ -10,6 +10,12 @@ template <typename Ok, typename Error>
 struct Result
 {
     explicit
+    Result(Word word)
+        : __word(word)
+    {
+    }
+
+    explicit
     operator
     bool() const
     {
@@ -28,8 +34,7 @@ struct Result
         return static_cast<Ok>(this->__word);
     }
 
-    //----------------------------------------------------------------------------------------------
-
+  private:
     Word
     __word;
 };

@@ -9,9 +9,13 @@
 // EOVERFLOW
 
 #if defined(__arm__)
+#  include "_arm/_call.hxx"
 #  define EOVERFLOW 75
+#  define __NR_fstat 108
 #elif defined(__x86_64__)
+#  include "_x86_64/_call.hxx"
 #  define EOVERFLOW 75
+#  define __NR_fstat 5
 #else
 #  error
 #endif
@@ -30,38 +34,9 @@ fstat(int fd, struct stat* sb) noexcept
         _E(OVERFLOW),
     };
 
-    Result<void, Error>
-    result;
-
-#if defined(__arm__)
-
-    register Word r0 asm ("r0") = 108;
-    register auto r1 asm ("r1") = fd;
-    register auto r2 asm ("r2") = sb;
-
-    asm volatile ("swi 0x0"
-                  : "=r" (r0)
-                  : "r" (r0),
-                    "r" (r1),
-                    "r" (r2)
-                  : "memory");
-
-    result.__word = r0;
-
-#elif defined(__x86_64__)
-
-    asm volatile ("syscall"
-                  : "=a" (result.__word)
-                  : "a" (5),
-                    "D" (fd),
-                    "S" (sb)
-                  : "rcx", "r11");
-
-#else
-#  error
-#endif
-
-    return result;
+    return Result<void, Error>(
+        _call<__NR_fstat>(fd, sb)
+    );
 }
 
 }

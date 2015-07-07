@@ -6,6 +6,16 @@
 #define EINTR 4
 #define EIO 5
 
+#if defined(__arm__)
+#  include "_arm/_call.hxx"
+#  define __NR_close 6
+#elif defined(__x86_64__)
+#  include "_x86_64/_call.hxx"
+#  define __NR_close 3
+#else
+#  error
+#endif
+
 namespace linux {
 
 static inline
@@ -19,35 +29,9 @@ close(int fd) noexcept
         _E(IO),
     };
 
-    Result<void, Error>
-    result;
-
-#if defined(__arm__)
-
-    register Word r0 asm ("r0") = 6;
-    register auto r1 asm ("r1") = fd;
-
-    asm volatile ("swi 0x0"
-                  : "=r" (r0)
-                  : "r" (r0),
-                    "r" (r1)
-                  : "memory");
-
-    result.__word = r0;
-
-#elif defined(__x86_64__)
-
-    asm volatile ("syscall"
-                  : "=a" (result.__word)
-                  : "a" (3),
-                    "D" (fd)
-                  : "rcx", "r11");
-
-#else
-#  error
-#endif
-
-    return result;
+    return Result<void, Error>(
+        _call<__NR_close>(fd)
+    );
 }
 
 }

@@ -12,9 +12,13 @@
 #define EISDIR 21
 
 #if defined(__arm__)
+#  include "_arm/_call.hxx"
 #  define EAGAIN 11
+#  define __NR_read 3
 #elif defined(__x86_64__)
+#  include "_x86_64/_call.hxx"
 #  define EAGAIN 11
+#  define __NR_read 0
 #else
 #  error
 #endif
@@ -36,41 +40,9 @@ read(int fd, void* buffer, size_t length) noexcept
         _E(ISDIR),
     };
 
-    Result<size_t, Error>
-    result;
-
-#if defined(__arm__)
-
-    register Word r0 asm ("r0") = 3;
-    register auto r1 asm ("r1") = fd;
-    register auto r2 asm ("r2") = buffer;
-    register auto r3 asm ("r3") = length;
-
-    asm volatile ("swi 0x0"
-                  : "=r" (r0)
-                  : "r" (r0),
-                    "r" (r1),
-                    "r" (r2),
-                    "r" (r3)
-                  : "memory");
-
-    result.__word = r0;
-
-#elif defined(__x86_64__)
-
-    asm volatile ("syscall"
-                  : "=a" (result.__word)
-                  : "a" (0),
-                    "D" (fd),
-                    "S" (buffer),
-                    "d" (length)
-                  : "rcx", "r11");
-
-#else
-#  error
-#endif
-
-    return result;
+    return Result<size_t, Error>(
+        _call<__NR_read>(fd, buffer, length)
+    );
 }
 
 }

@@ -8,9 +8,13 @@
 // ENOSYS
 
 #if defined(__arm__)
+#  include "_arm/_call.hxx"
 #  define ENOSYS 38
+#  define __NR_fork 2
 #elif defined(__x86_64__)
+#  include "_x86_64/_call.hxx"
 #  define ENOSYS 38
+#  define __NR_fork 57
 #else
 #  error
 #endif
@@ -28,32 +32,9 @@ fork() noexcept
         _E(NOSYS),
     };
 
-    Result<pid_t, Error>
-    result;
-
-#if defined(__arm__)
-
-    register Word r0 asm ("r0") = 2;
-
-    asm volatile ("swi 0x0"
-                  : "=r" (r0)
-                  : "r" (r0)
-                  : "memory");
-
-    result.__word = r0;
-
-#elif defined(__x86_64__)
-
-    asm volatile ("syscall"
-                  : "=a" (result.__word)
-                  : "a" (57)
-                  : "rcx", "r11");
-
-#else
-#  error
-#endif
-
-    return result;
+    return Result<pid_t, Error>(
+        _call<__NR_fork>()
+    );
 }
 
 }

@@ -21,13 +21,17 @@
 #define ETXTBSY 26
 
 #if defined(__arm__)
+#  include "_arm/_call.hxx"
 #  define ELIBBAD 80
 #  define ELOOP 40
 #  define ENAMETOOLONG 36
+#  define __NR_execve 11
 #elif defined(__x86_64__)
+#  include "_x86_64/_call.hxx"
 #  define ELIBBAD 80
 #  define ELOOP 40
 #  define ENAMETOOLONG 36
+#  define __NR_execve 59
 #else
 #  error
 #endif
@@ -59,41 +63,9 @@ execve(const char* filename, char* const argv[], char* const envp[]) noexcept
         _E(TXTBSY),
     };
 
-    Result<void, Error>
-    result;
-
-#if defined(__arm__)
-
-    register Word r0 asm ("r0") = 11;
-    register auto r1 asm ("r1") = filename;
-    register auto r2 asm ("r2") = argv;
-    register auto r3 asm ("r3") = envp;
-
-    asm volatile ("swi 0x0"
-                  : "=r" (r0)
-                  : "r" (r0),
-                    "r" (r1),
-                    "r" (r2),
-                    "r" (r3)
-                  : "memory");
-
-    result.__word = r0;
-
-#elif defined(__x86_64__)
-
-    asm volatile ("syscall"
-                  : "=a" (result.__word)
-                  : "a" (59),
-                    "D" (filename),
-                    "S" (argv),
-                    "d" (envp)
-                  : "rcx", "r11");
-
-#else
-#  error
-#endif
-
-    return result.error();
+    return Result<void, Error>(
+        _call<__NR_execve>(filename, argv, envp)
+    ).error();
 }
 
 }
