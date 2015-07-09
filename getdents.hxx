@@ -38,8 +38,9 @@ getdents(int fd, struct linux_dirent* dirp, unsigned int count) noexcept
     result;
 
 #if defined(__arm__)
+#  define __NR_getdents 141
 
-    register Word r0 asm ("r0") = 141;
+    register Word r0 asm ("r0") = __NR_getdents;
     register auto r1 asm ("r1") = fd;
     register auto r2 asm ("r2") = dirp;
     register auto r3 asm ("r3") = count;
@@ -55,10 +56,11 @@ getdents(int fd, struct linux_dirent* dirp, unsigned int count) noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
+#  define __NR_getdents 78
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (78),
+                  : "a" (__NR_getdents),
                     "D" (fd),
                     "S" (dirp),
                     "d" (count)

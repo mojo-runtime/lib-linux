@@ -52,8 +52,9 @@ write(int fd, const void* buffer, size_t length) noexcept
     result;
 
 #if defined(__arm__)
+#  define __NR_write 4
 
-    register Word r0 asm ("r0") = 4;
+    register Word r0 asm ("r0") = __NR_write;
     register auto r1 asm ("r1") = fd;
     register auto r2 asm ("r2") = buffer;
     register auto r3 asm ("r3") = length;
@@ -69,10 +70,11 @@ write(int fd, const void* buffer, size_t length) noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
+#  define __NR_write 1
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (1),
+                  : "a" (__NR_write),
                     "D" (fd),
                     "S" (buffer),
                     "d" (length)

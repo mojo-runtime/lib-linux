@@ -57,8 +57,9 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
     result;
 
 #if defined(__arm__)
+#  define __NR_mmap 90
 
-    register Word r0 asm ("r0") = 90;
+    register Word r0 asm ("r0") = __NR_mmap;
     register auto r1 asm ("r1") = addr;
     register auto r2 asm ("r2") = length;
     register auto r3 asm ("r3") = prot;
@@ -80,6 +81,7 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
     result.__word = r0;
 
 #elif defined(__x86_64__)
+#  define __NR_mmap 9
 
     register auto r10 asm ("r10") = flags;
     register auto r8  asm ("r8")  = fd;
@@ -87,7 +89,7 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (9),
+                  : "a" (__NR_mmap),
                     "D" (addr),
                     "S" (length),
                     "d" (prot),

@@ -46,8 +46,9 @@ stat(const char* pathname, struct stat* buf) noexcept
     result;
 
 #if defined(__arm__)
+#  define __NR_stat 106
 
-    register Word r0 asm ("r0") = 106;
+    register Word r0 asm ("r0") = __NR_stat;
     register auto r1 asm ("r1") = pathname;
     register auto r2 asm ("r2") = buf;
 
@@ -61,10 +62,11 @@ stat(const char* pathname, struct stat* buf) noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
+#  define __NR_stat 4
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (4),
+                  : "a" (__NR_stat),
                     "D" (pathname),
                     "S" (buf)
                   : "rcx", "r11");

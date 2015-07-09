@@ -29,8 +29,9 @@ ioctl(int fd, int request, Arg arg) noexcept
     result;
 
 #if defined(__arm__)
+#  define __NR_ioctl 54
 
-    register Word r0 asm ("r0") = 54;
+    register Word r0 asm ("r0") = __NR_ioctl;
     register auto r1 asm ("r1") = fd;
     register auto r2 asm ("r2") = request;
     register auto r3 asm ("r3") = arg;
@@ -44,10 +45,11 @@ ioctl(int fd, int request, Arg arg) noexcept
                   : "memory");
 
 #elif defined(__x86_64__)
+#  define __NR_ioctl 16
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (16),
+                  : "a" (__NR_ioctl),
                     "D" (fd),
                     "S" (request),
                     "d" (arg)

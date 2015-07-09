@@ -20,8 +20,9 @@ munmap(void* address, size_t length) noexcept
     result;
 
 #if defined(__arm__)
+#  define __NR_munmap 91
 
-    register Word r0 asm ("r0") = 91;
+    register Word r0 asm ("r0") = __NR_munmap;
     register auto r1 asm ("r1") = address;
     register auto r2 asm ("r2") = length;
 
@@ -35,10 +36,11 @@ munmap(void* address, size_t length) noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
+#  define __NR_munmap 11
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (11),
+                  : "a" (__NR_munmap),
                     "D" (address),
                     "S" (length)
                   : "rcx", "r11");

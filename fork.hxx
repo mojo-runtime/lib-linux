@@ -32,8 +32,9 @@ fork() noexcept
     result;
 
 #if defined(__arm__)
+#  define __NR_fork 2
 
-    register Word r0 asm ("r0") = 2;
+    register Word r0 asm ("r0") = __NR_fork;
 
     asm volatile ("swi 0x0"
                   : "=r" (r0)
@@ -43,10 +44,11 @@ fork() noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
+#  define __NR_fork 57
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (57)
+                  : "a" (__NR_fork)
                   : "rcx", "r11");
 
 #else

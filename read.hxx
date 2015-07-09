@@ -40,8 +40,9 @@ read(int fd, void* buffer, size_t length) noexcept
     result;
 
 #if defined(__arm__)
+#  define __NR_read 3
 
-    register Word r0 asm ("r0") = 3;
+    register Word r0 asm ("r0") = __NR_read;
     register auto r1 asm ("r1") = fd;
     register auto r2 asm ("r2") = buffer;
     register auto r3 asm ("r3") = length;
@@ -57,10 +58,11 @@ read(int fd, void* buffer, size_t length) noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
+#  define __NR_read 0
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
-                  : "a" (0),
+                  : "a" (__NR_read),
                     "D" (fd),
                     "S" (buffer),
                     "d" (length)
