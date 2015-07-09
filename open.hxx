@@ -35,7 +35,6 @@
 #define O_WRONLY 0x1
 
 #if defined(__arm__)
-#  include "_arm/_call.hxx"
 #  define EDQUOT 122
 #  define ELOOP 40
 #  define ENAMETOOLONG 36
@@ -46,9 +45,7 @@
 #  define O_CREAT 0x40
 #  define O_DIRECTORY 0x4000
 #  define O_NONBLOCK 0x800
-#  define __NR_open 5
 #elif defined(__x86_64__)
-#  include "_x86_64/_call.hxx"
 #  define EDQUOT 122
 #  define ELOOP 40
 #  define ENAMETOOLONG 36
@@ -59,7 +56,6 @@
 #  define O_CREAT 0x40
 #  define O_DIRECTORY 0x10000
 #  define O_NONBLOCK 0x800
-#  define __NR_open 2
 #else
 #  error
 #endif
@@ -97,9 +93,38 @@ open(const char* pathname, int flags) noexcept
         _E(WOULDBLOCK),
     };
 
-    return Result<int, Error>(
-        _call<__NR_open>(pathname, flags)
-    );
+    Result<int, Error>
+    result;
+
+#if defined(__arm__)
+
+    register Word r0 asm ("r0") = 5;
+    register auto r1 asm ("r1") = pathname;
+    register auto r2 asm ("r2") = flags;
+
+    asm volatile ("swi 0x0"
+                  : "=r" (r0)
+                  : "r" (r0),
+                    "r" (r1),
+                    "r" (r2)
+                  : "memory");
+
+    result.__word = r0;
+
+#elif defined(__x86_64__)
+
+    asm volatile ("syscall"
+                  : "=a" (result.__word)
+                  : "a" (2),
+                    "D" (pathname),
+                    "S" (flags)
+                  : "rcx", "r11");
+
+#else
+#  error
+#endif
+
+    return result;
 }
 
 }

@@ -19,16 +19,6 @@
 #define ENOENT 2
 #define ENOTDIR 20
 
-#if defined(__arm__)
-#  include "_arm/_call.hxx"
-#  define __NR_getdents 141
-#elif defined(__x86_64__)
-#  include "_x86_64/_call.hxx"
-#  define __NR_getdents 78
-#else
-#  error
-#endif
-
 namespace linux {
 
 static inline
@@ -44,9 +34,41 @@ getdents(int fd, struct linux_dirent* dirp, unsigned int count) noexcept
         _E(NOTDIR),
     };
 
-    return Result<unsigned int, Error>(
-        _call<__NR_getdents>(fd, dirp, count)
-    );
+    Result<unsigned int, Error>
+    result;
+
+#if defined(__arm__)
+
+    register Word r0 asm ("r0") = 141;
+    register auto r1 asm ("r1") = fd;
+    register auto r2 asm ("r2") = dirp;
+    register auto r3 asm ("r3") = count;
+
+    asm volatile ("swi 0x0"
+                  : "=r" (r0)
+                  : "r" (r0),
+                    "r" (r1),
+                    "r" (r2),
+                    "r" (r3)
+                  : "memory");
+
+    result.__word = r0;
+
+#elif defined(__x86_64__)
+
+    asm volatile ("syscall"
+                  : "=a" (result.__word)
+                  : "a" (78),
+                    "D" (fd),
+                    "S" (dirp),
+                    "d" (count)
+                  : "rcx", "r11");
+
+#else
+#  error
+#endif
+
+    return result;
 }
 
 }
