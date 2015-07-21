@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Word.hxx"
+
 #define _E(rest) E##rest##_ = E##rest
 
 namespace linux {
-
-using Word = decltype(sizeof(int));
 
 template <typename Ok, typename Error>
 struct Result
