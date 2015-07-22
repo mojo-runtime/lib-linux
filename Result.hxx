@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Word.hxx"
+#include <Word.hxx>
 
 #define _E(rest) E##rest##_ = E##rest
 
