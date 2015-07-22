@@ -7,9 +7,10 @@
 
 namespace linux {
 
+template <typename T>
 static inline
 auto
-munmap(void* address, size_t length) noexcept
+munmap(T* address, size_t length) noexcept
 {
     enum Error
     {
