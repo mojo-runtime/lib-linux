@@ -4,6 +4,7 @@
 
 #define E2BIG 7
 #define EACCES 13
+// EAGAIN (since 3.1)
 #define EFAULT 14
 #define EINVAL 22
 #define EIO 5
@@ -21,10 +22,12 @@
 #define ETXTBSY 26
 
 #if defined(__arm__)
+#  define EAGAIN 11
 #  define ELIBBAD 80
 #  define ELOOP 40
 #  define ENAMETOOLONG 36
 #elif defined(__x86_64__)
+#  define EAGAIN 11
 #  define ELIBBAD 80
 #  define ELOOP 40
 #  define ENAMETOOLONG 36
@@ -42,6 +45,7 @@ execve(const char* filename, char* const argv[], char* const envp[]) noexcept
     {
         _E(2BIG),
         _E(ACCES),
+        _E(AGAIN),
         _E(FAULT),
         _E(INVAL),
         _E(IO),
