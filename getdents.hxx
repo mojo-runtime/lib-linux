@@ -31,7 +31,7 @@ namespace linux {
 
 static inline
 auto
-getdents(int fd, struct linux_dirent* dirp, unsigned int count) noexcept
+getdents(int fd, struct linux_dirent* buffer, unsigned int length) noexcept
 {
     enum Error
     {
@@ -49,8 +49,8 @@ getdents(int fd, struct linux_dirent* dirp, unsigned int count) noexcept
 
     register Word r0 asm ("r0") = __NR_getdents;
     register auto r1 asm ("r1") = fd;
-    register auto r2 asm ("r2") = dirp;
-    register auto r3 asm ("r3") = count;
+    register auto r2 asm ("r2") = buffer;
+    register auto r3 asm ("r3") = length;
 
     asm volatile ("swi 0x0"
                   : "=r" (r0)
@@ -68,8 +68,8 @@ getdents(int fd, struct linux_dirent* dirp, unsigned int count) noexcept
                   : "=a" (result.__word)
                   : "a" (__NR_getdents),
                     "D" (fd),
-                    "S" (dirp),
-                    "d" (count)
+                    "S" (buffer),
+                    "d" (length)
                   : "rcx", "r11");
 
 #else

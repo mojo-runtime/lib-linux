@@ -41,7 +41,7 @@ namespace linux {
 
 static inline
 auto
-execve(const char* filename, char* const argv[], char* const envp[]) noexcept
+execve(const char* path, char* const argv[], char* const envp[]) noexcept
 {
     enum Error
     {
@@ -71,7 +71,7 @@ execve(const char* filename, char* const argv[], char* const envp[]) noexcept
 #if defined(__arm__)
 
     register Word r0 asm ("r0") = __NR_execve;
-    register auto r1 asm ("r1") = filename;
+    register auto r1 asm ("r1") = path;
     register auto r2 asm ("r2") = argv;
     register auto r3 asm ("r3") = envp;
 
@@ -90,7 +90,7 @@ execve(const char* filename, char* const argv[], char* const envp[]) noexcept
     asm volatile ("syscall"
                   : "=a" (result.__word)
                   : "a" (__NR_execve),
-                    "D" (filename),
+                    "D" (path),
                     "S" (argv),
                     "d" (envp)
                   : "rcx", "r11");

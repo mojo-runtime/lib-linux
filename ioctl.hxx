@@ -20,10 +20,10 @@ namespace linux {
 // The type of `request` varies from man page to man page.
 // See: https://sourceware.org/bugzilla/show_bug.cgi?id=14362
 
-template <typename Arg>
+template <typename Argument>
 static inline
 auto
-ioctl(int fd, int request, Arg arg) noexcept
+ioctl(int fd, int request, Argument argument) noexcept
 {
     enum Error
     {
@@ -41,7 +41,7 @@ ioctl(int fd, int request, Arg arg) noexcept
     register Word r0 asm ("r0") = __NR_ioctl;
     register auto r1 asm ("r1") = fd;
     register auto r2 asm ("r2") = request;
-    register auto r3 asm ("r3") = arg;
+    register auto r3 asm ("r3") = argument;
 
     asm volatile ("swi 0x0"
                   : "=r" (r0)
@@ -58,7 +58,7 @@ ioctl(int fd, int request, Arg arg) noexcept
                   : "a" (__NR_ioctl),
                     "D" (fd),
                     "S" (request),
-                    "d" (arg)
+                    "d" (argument)
                   : "rcx", "r11");
 
 #else

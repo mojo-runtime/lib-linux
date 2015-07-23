@@ -30,7 +30,7 @@ namespace linux {
 
 static inline
 auto
-stat(const char* pathname, struct stat* buf) noexcept
+stat(const char* path, struct stat* buffer) noexcept
 {
     enum Error
     {
@@ -50,8 +50,8 @@ stat(const char* pathname, struct stat* buf) noexcept
 #if defined(__arm__)
 
     register Word r0 asm ("r0") = __NR_stat;
-    register auto r1 asm ("r1") = pathname;
-    register auto r2 asm ("r2") = buf;
+    register auto r1 asm ("r1") = path;
+    register auto r2 asm ("r2") = buffer;
 
     asm volatile ("swi 0x0"
                   : "=r" (r0)
@@ -67,8 +67,8 @@ stat(const char* pathname, struct stat* buf) noexcept
     asm volatile ("syscall"
                   : "=a" (result.__word)
                   : "a" (__NR_stat),
-                    "D" (pathname),
-                    "S" (buf)
+                    "D" (path),
+                    "S" (buffer)
                   : "rcx", "r11");
 
 #else

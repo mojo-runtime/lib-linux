@@ -22,7 +22,7 @@ namespace linux {
 
 static inline
 auto
-fstat(int fd, struct stat* sb) noexcept
+fstat(int fd, struct stat* buffer) noexcept
 {
     enum Error
     {
@@ -39,7 +39,7 @@ fstat(int fd, struct stat* sb) noexcept
 
     register Word r0 asm ("r0") = __NR_fstat;
     register auto r1 asm ("r1") = fd;
-    register auto r2 asm ("r2") = sb;
+    register auto r2 asm ("r2") = buffer;
 
     asm volatile ("swi 0x0"
                   : "=r" (r0)
@@ -56,7 +56,7 @@ fstat(int fd, struct stat* sb) noexcept
                   : "=a" (result.__word)
                   : "a" (__NR_fstat),
                     "D" (fd),
-                    "S" (sb)
+                    "S" (buffer)
                   : "rcx", "r11");
 
 #else

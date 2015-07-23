@@ -39,7 +39,7 @@ namespace linux {
 
 static inline
 auto
-mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexcept
+mmap(void* address, size_t length, int protection, int flags, int fd, off_t offset) noexcept
 {
     enum Error
     {
@@ -61,9 +61,9 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
 #if defined(__arm__)
 
     register Word r0 asm ("r0") = __NR_mmap;
-    register auto r1 asm ("r1") = addr;
+    register auto r1 asm ("r1") = address;
     register auto r2 asm ("r2") = length;
-    register auto r3 asm ("r3") = prot;
+    register auto r3 asm ("r3") = protection;
     register auto r4 asm ("r4") = flags;
     register auto r5 asm ("r5") = fd;
     register auto r6 asm ("r6") = offset;
@@ -90,9 +90,9 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
     asm volatile ("syscall"
                   : "=a" (result.__word)
                   : "a" (__NR_mmap),
-                    "D" (addr),
+                    "D" (address),
                     "S" (length),
-                    "d" (prot),
+                    "d" (protection),
                     "r" (r10),
                     "r" (r8),
                     "r" (r9)
