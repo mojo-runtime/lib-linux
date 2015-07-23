@@ -7,6 +7,14 @@
 #define EINVAL 22
 #define ENOTTY 25
 
+#if defined(__arm__)
+#  define __NR_ioctl 54
+#elif defined(__x86_64__)
+#  define __NR_ioctl 16
+#else
+#  error
+#endif
+
 namespace linux {
 
 // The type of `request` varies from man page to man page.
@@ -29,7 +37,6 @@ ioctl(int fd, int request, Arg arg) noexcept
     result;
 
 #if defined(__arm__)
-#  define __NR_ioctl 54
 
     register Word r0 asm ("r0") = __NR_ioctl;
     register auto r1 asm ("r1") = fd;
@@ -45,7 +52,6 @@ ioctl(int fd, int request, Arg arg) noexcept
                   : "memory");
 
 #elif defined(__x86_64__)
-#  define __NR_ioctl 16
 
     asm volatile ("syscall"
                   : "=a" (result.__word)

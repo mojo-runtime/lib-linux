@@ -26,9 +26,11 @@
 #if defined(__arm__)
 #  define EAGAIN 11
 #  define EOVERFLOW 75
+#  define __NR_mmap 90
 #elif defined(__x86_64__)
 #  define EAGAIN 11
 #  define EOVERFLOW 75
+#  define __NR_mmap 9
 #else
 #  error
 #endif
@@ -57,7 +59,6 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
     result;
 
 #if defined(__arm__)
-#  define __NR_mmap 90
 
     register Word r0 asm ("r0") = __NR_mmap;
     register auto r1 asm ("r1") = addr;
@@ -81,7 +82,6 @@ mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) noexc
     result.__word = r0;
 
 #elif defined(__x86_64__)
-#  define __NR_mmap 9
 
     register auto r10 asm ("r10") = flags;
     register auto r8  asm ("r8")  = fd;

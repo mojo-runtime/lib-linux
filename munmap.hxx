@@ -5,6 +5,14 @@
 
 #define EINVAL 22
 
+#if defined(__arm__)
+#  define __NR_munmap 91
+#elif defined(__x86_64__)
+#  define __NR_munmap 11
+#else
+#  error
+#endif
+
 namespace linux {
 
 template <typename T>
@@ -21,7 +29,6 @@ munmap(T* address, size_t length) noexcept
     result;
 
 #if defined(__arm__)
-#  define __NR_munmap 91
 
     register Word r0 asm ("r0") = __NR_munmap;
     register auto r1 asm ("r1") = address;
@@ -37,7 +44,6 @@ munmap(T* address, size_t length) noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
-#  define __NR_munmap 11
 
     asm volatile ("syscall"
                   : "=a" (result.__word)

@@ -9,8 +9,10 @@
 
 #if defined(__arm__)
 #  define ENOSYS 38
+#  define __NR_fork 2
 #elif defined(__x86_64__)
 #  define ENOSYS 38
+#  define __NR_fork 57
 #else
 #  error
 #endif
@@ -32,7 +34,6 @@ fork() noexcept
     result;
 
 #if defined(__arm__)
-#  define __NR_fork 2
 
     register Word r0 asm ("r0") = __NR_fork;
 
@@ -44,7 +45,6 @@ fork() noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
-#  define __NR_fork 57
 
     asm volatile ("syscall"
                   : "=a" (result.__word)

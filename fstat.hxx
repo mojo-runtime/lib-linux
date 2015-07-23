@@ -10,8 +10,10 @@
 
 #if defined(__arm__)
 #  define EOVERFLOW 75
+#  define __NR_fstat 108
 #elif defined(__x86_64__)
 #  define EOVERFLOW 75
+#  define __NR_fstat 5
 #else
 #  error
 #endif
@@ -34,7 +36,6 @@ fstat(int fd, struct stat* sb) noexcept
     result;
 
 #if defined(__arm__)
-#  define __NR_fstat 108
 
     register Word r0 asm ("r0") = __NR_fstat;
     register auto r1 asm ("r1") = fd;
@@ -50,7 +51,6 @@ fstat(int fd, struct stat* sb) noexcept
     result.__word = r0;
 
 #elif defined(__x86_64__)
-#  define __NR_fstat 5
 
     asm volatile ("syscall"
                   : "=a" (result.__word)
