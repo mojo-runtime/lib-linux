@@ -9,11 +9,12 @@ namespace linux {
 template <typename Success, typename Failure>
 struct Result
 {
-    explicit
+    enum Kind { SUCCESS, FAILURE };
+
     operator
-    bool() const
+    Kind() const
     {
-        return this->__word > 0xFFFFFFFFFFFFF000UL;
+        return __builtin_expect(this->__word <= 0xFFFFFFFFFFFFF000UL, 1) ? SUCCESS : FAILURE;
     }
 
     Failure
