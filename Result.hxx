@@ -6,7 +6,7 @@
 
 namespace linux {
 
-template <typename Ok, typename Error>
+template <typename Success, typename Failure>
 struct Result
 {
     explicit
@@ -16,16 +16,16 @@ struct Result
         return this->__word > 0xFFFFFFFFFFFFF000UL;
     }
 
-    Error
-    error() const
+    Failure
+    failure() const
     {
-        return static_cast<Error>(-this->__word);
+        return static_cast<Failure>(-this->__word);
     }
 
-    Ok
-    ok() const
+    Success
+    success() const
     {
-        return static_cast<Ok>(this->__word);
+        return static_cast<Success>(this->__word);
     }
 
     //----------------------------------------------------------------------------------------------

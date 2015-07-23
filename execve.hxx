@@ -95,7 +95,7 @@ execve(const char* filename, char* const argv[], char* const envp[]) noexcept
 #  error
 #endif
 
-    return result.error();
+    return result.failure();
 }
 
 }
