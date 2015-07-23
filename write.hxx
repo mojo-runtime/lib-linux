@@ -41,7 +41,9 @@ write(int fd, const void* buffer, size_t length) noexcept
         _E(DQUOT),
         _E(FAULT),
         _E(FBIG),
+#if defined(_ENABLE_SIGNAL_HANDLERS)
         _E(INTR),
+#endif
         _E(INVAL),
         _E(IO),
         _E(NOSPC),

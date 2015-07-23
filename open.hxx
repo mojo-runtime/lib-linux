@@ -72,7 +72,9 @@ open(const char* pathname, int flags) noexcept
         _E(DQUOT),
         _E(EXIST),
         _E(FAULT),
+#if defined(_ENABLE_SIGNAL_HANDLERS)
         _E(INTR),
+#endif
         _E(INVAL),
         _E(ISDIR),
         _E(LOOP),

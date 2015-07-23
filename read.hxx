@@ -30,7 +30,7 @@ read(int fd, void* buffer, size_t length) noexcept
         _E(AGAIN),
         _E(BADF),
         _E(FAULT),
-        _E(INTR),
+        _E(INTR), // In the absence of signal handlers, iff an inotify file descriptor
         _E(INVAL),
         _E(IO),
         _E(ISDIR),

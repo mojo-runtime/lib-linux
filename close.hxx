@@ -15,7 +15,9 @@ close(int fd) noexcept
     enum Error
     {
         _E(BADF),
+#if defined(_ENABLE_SIGNAL_HANDLERS)
         _E(INTR),
+#endif
         _E(IO),
     };
 
