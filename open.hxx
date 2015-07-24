@@ -131,4 +131,40 @@ open(const char* path, int flags) noexcept
     return result;
 }
 
+static inline
+auto
+open(const char* path) noexcept
+{
+    enum Error
+    {
+        permission_denied = EACCES,
+        // EDQUOT
+        // EEXIST
+        invalid_path_address = EFAULT,
+#if defined(_ENABLE_SIGNAL_HANDLERS)
+        interrupted = EINTR,
+#endif
+        // EINVAL
+        // EISDIR
+        too_many_symbolic_links_encountered = ELOOP,
+        process_file_descriptor_limit_reached = EMFILE,
+        path_too_long = ENAMETOOLONG,
+        system_file_descriptor_limit_reached = ENFILE,
+        character_or_block_device_does_not_exist = ENXIO,
+        file_or_directory_does_not_exist = ENOENT,
+        system_out_of_memory = ENOMEM,
+        // ENOSPC
+        path_component_not_a_directory = ENOTDIR,
+        // ENXIO
+        // EOPNOTSUPP
+        file_too_large = EOVERFLOW,
+        // EPERM
+        // EROFS
+        // ETXTBSY
+        // EWOULDBLOCK
+    };
+
+    return Result<int, Error> { open(path, O_RDONLY).__word };
+}
+
 }
