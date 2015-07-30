@@ -16,6 +16,7 @@
 #define EINTR 4
 // EISCONN
 // ENETUNREACH
+#define ENOENT 2
 // ENOTSOCK
 #define EPERM 1
 // EPROTOTYPE
@@ -68,6 +69,7 @@ connect(int fd, const Address* address, socklen_t length) noexcept
         _E(INTR),
         _E(ISCONN),
         _E(NETUNREACH),
+        _E(NOENT), // AF_UNIX
         _E(NOTSOCK),
         _E(PERM),
         _E(PROTOTYPE),
