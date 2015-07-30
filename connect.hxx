@@ -8,13 +8,16 @@
 // EADDRNOTAVAIL
 // EAFNOSUPPORT
 // EAGAIN
+// EALREADY
 #define EBADF 9
 // ECONNREFUSED
 #define EFAULT 14
 // EINPROGRESS
 #define EINTR 4
+// EISCONN
 // ENETUNREACH
 // ENOTSOCK
+#define EPERM 1
 // EPROTOTYPE
 // ETIMEDOUT
 // "There may be other domain-specific error codes."…
@@ -26,8 +29,10 @@
 #  define EADDRNOTAVAIL 99
 #  define EAFNOSUPPORT 97
 #  define EAGAIN 11
+#  define EALREADY 114
 #  define ECONNREFUSED 111
 #  define EINPROGRESS 115
+#  define EISCONN 106
 #  define ENETUNREACH 101
 #  define ENOTSOCK 88
 #  define EPROTOTYPE 91
@@ -55,13 +60,16 @@ connect(int fd, const Address* address, socklen_t length) noexcept
         _E(ADDRNOTAVAIL),
         _E(AFNOSUPPORT),
         _E(AGAIN),
+        _E(ALREADY),
         _E(BADF),
         _E(CONNREFUSED),
         _E(FAULT),
         _E(INPROGRESS),
         _E(INTR),
+        _E(ISCONN),
         _E(NETUNREACH),
         _E(NOTSOCK),
+        _E(PERM),
         _E(PROTOTYPE),
         _E(TIMEDOUT)
     };
